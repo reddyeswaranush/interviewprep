@@ -40,7 +40,7 @@ Respond in the format:
 #funnction to give the final feedback on how his interview was and what are the suggestions
 def finalsummary(a):
     info=f"""
-you are given a list of feedback you need to summarise it and give a ultimate feedback in points 
+you are given a list of feedback you need to summarise it and give a ultimate feedback in 5-6 ultimate points
 feedback={a}"""
     response=model.generate_content(info)
     return response.text
