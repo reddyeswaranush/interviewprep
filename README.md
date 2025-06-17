@@ -1,6 +1,6 @@
-# Interviewprep
+# InterviewMate
 
-Interviewprep is a Python-based interactive interview simulator powered by the Google Gemini API. This tool helps users practice for technical interviews in various fields by asking relevant questions, providing real-time feedback on their answers, and generating a comprehensive performance summary.
+InterviewMate is a Python-based interactive interview simulator powered by the Google Gemini API. This tool helps users practice for technical interviews in various fields by asking relevant questions, providing real-time feedback on their answers, and generating a comprehensive performance summary.
 
 ---
 
