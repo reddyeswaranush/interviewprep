@@ -206,8 +206,8 @@ imp_questions_map = {
 if field not in imp_questions_map.keys():
     print("Field not found")
 else:
-    imp_questions=random.sample(imp_questions_map[field],1)
-    imp_questions+=random.sample(imp_questions_map['general'],1)
+    imp_questions=random.sample(imp_questions_map[field],10)
+    imp_questions+=random.sample(imp_questions_map['general'],5)
     score=[]
     feedback=[]
     for i in imp_questions:
