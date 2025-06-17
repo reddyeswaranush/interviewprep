@@ -40,7 +40,7 @@ Respond in the format:
 #funnction to give the final feedback on how his interview was and what are the suggestions
 def finalsummary(a):
     info=f"""
-you are given a list of feedback you need to summarise it and give a ultimate feedback 
+you are given a list of feedback you need to summarise it and give a ultimate feedback in points 
 feedback={a}"""
     response=model.generate_content(info)
     return response.text
@@ -216,5 +216,5 @@ else:
         result=getscore(i,ans)
         score.append(result[0])
         feedback.append(result[1])
-    print(sum(score)/len(score))
-    print(finalsummary(feedback))
+    summary=finalsummary(feedback)
+    #show the user his score and suggestion he can improve in the feedback page
