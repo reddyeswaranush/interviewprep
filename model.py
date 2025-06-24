@@ -1,11 +1,12 @@
 from google import generativeai as genai
+from dotenv import load_dotenv
+import os
 
-# List of Gemini API keys
-API_KEYS = [
-    "AIzaSyCPVOJc8Z1rpADgDF7oYoq5vhypJ0xiMWM",
-    "AIzaSyCAIHTWdU_z2IvvYcK2z8w1wqvMVE751_0",
-    # Add more as needed
-]
+# Load environment variables
+load_dotenv()
+
+# Get API keys from .env
+API_KEYS = os.getenv("API_KEYS", "").split(",")
 
 # Try each key until one works
 def get_model():
