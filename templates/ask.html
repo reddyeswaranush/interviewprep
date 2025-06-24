@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head><title>Question {{ qnum }}</title></head>
+<body>
+  <h2>Question {{ qnum }} of {{ total }}</h2>
+  <p>{{ question }}</p>
+  <form method="POST">
+    <textarea name="answer" required placeholder="Type your answer here..."></textarea><br>
+    <button type="submit">Submit Answer</button>
+  </form>
+</body>
+</html>
