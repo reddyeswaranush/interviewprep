@@ -2,7 +2,7 @@ from google import generativeai as genai
 
 # List of Gemini API keys
 API_KEYS = [
-    "AIzaSyXXXXXX1",
+    "AIzaSyCPVOJc8Z1rpADgDF7oYoq5vhypJ0xiMWM",
     "AIzaSyXXXXXX2",
     "AIzaSyXXXXXX3"
     # Add more as needed
