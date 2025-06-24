@@ -1,72 +1,11 @@
-from google import generativeai as genai
+from flask import Flask, render_template, request, redirect, url_for, session
+from model import getscore, finalsummary
 import random
 
+app = Flask(__name__)
+app.secret_key = "interview_secret_key"
 
-#function to score how good the answer is for that question
-def getscore(question, answer):
-    info = f"""
-You are an interview expert but be a little free not toooo strict. A user was asked the following interview question:
-
-Question: {question}
-
-Their answer was: "{answer}"
-
-Please do the following:
-1. Rate the answer from 1 to 10 based on relevance, clarity, and depth.
-2. Provide detailed feedback on how the answer can be improved in a single line.
-Respond in the format:
-1.  **Rating:** <score>/10
-2.  **Feedback:** <your feedback here>
-"""
-    response = model.generate_content(info)
-    text = response.text.strip()
-
-    lines = text.split("\n")
-    score = -1
-    feedback = "Feedback not found"
-
-    for line in lines:
-        if "**Rating:**" in line:
-            try:
-                score = int(line.split("**Rating:**")[1].split("/")[0].strip())
-            except:
-                score = -1
-        elif "**Feedback:**" in line:
-            feedback = line.split("**Feedback:**")[1].strip()
-
-    return [score, feedback]
-
-
-#funnction to give the final feedback on how his interview was and what are the suggestions
-def finalsummary(a):
-    info=f"""
-you are given a list of feedback you need to summarise it and give a ultimate feedback in 5-6 ultimate points
-feedback={a}"""
-    response=model.generate_content(info)
-    return response.text
-
-
-#GPT model build
-genai.configure(api_key="AIzaSyCPVOJc8Z1rpADgDF7oYoq5vhypJ0xiMWM")
-model=genai.GenerativeModel("gemini-2.0-flash")
-
-
-#give user option so that he can select from those
-field=input("Please enter your field out of the given options \n" 
-"1.web development\n" 
-"2.devops\n"
-"3.cybersecurity\n"
-"4.ai\n"
-"5.ml\n"
-"6.mobile development\n"
-"7.uiux\n"
-"8.data analytics\n" 
-"9.data scientist\n"
-"10.prompt engineering\n").lower()
-
-
-#question to select from the field the user selected 
-imp_questions_map = {
+questions_map = {
     "general": [
     "Tell me about yourself.",
     "What are your strengths and weaknesses?",
@@ -366,19 +305,38 @@ imp_questions_map = {
     ]
 }
 
-#model train and evaluation
-if field not in imp_questions_map.keys():
-    print("Field not found")
-else:
-    imp_questions=random.sample(imp_questions_map[field],10)
-    imp_questions+=random.sample(imp_questions_map['general'],5)
-    score=[]
-    feedback=[]
-    for i in imp_questions:
-        #print the question for the user to read
-        ans="Input answer from the user through their voice or speach"
-        result=getscore(i,ans)
-        score.append(result[0])
-        feedback.append(result[1])
-    summary=finalsummary(feedback)
-    #show the user his score and suggestion he can improve in the feedback page
+@app.route("/", methods=["GET", "POST"])
+def index():
+    if request.method == "POST":
+        session["name"] = request.form["name"]
+        session["field"] = request.form["field"]
+        questions = random.sample(questions_map[session["field"]], 10) + random.sample(questions_map["general"], 5)
+        session["questions"] = questions
+        session["answers"] = []
+        session["feedback"] = []
+        session["scores"] = []
+        return redirect(url_for("ask", q=0))
+    return render_template("index.html")
+
+@app.route("/ask/<int:q>", methods=["GET", "POST"])
+def ask(q):
+    questions = session["questions"]
+    if request.method == "POST":
+        answer = request.form["answer"]
+        score, fb = getscore(questions[q - 1], answer)
+        session["answers"].append(answer)
+        session["scores"].append(score)
+        session["feedback"].append(fb)
+        if q >= len(questions):
+            return redirect(url_for("result"))
+        return redirect(url_for("ask", q=q))
+    return render_template("ask.html", question=questions[q], qnum=q + 1, total=len(questions))
+
+@app.route("/result")
+def result():
+    summary = finalsummary(session["feedback"])
+    return render_template("result.html", name=session["name"], scores=session["scores"],
+                           feedback=session["feedback"], summary=summary)
+
+if __name__ == "__main__":
+    app.run(debug=True)
